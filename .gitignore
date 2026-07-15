@@ -216,3 +216,29 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- AI-BEE project-specific ignores ---
+# Generated output files (large, and regenerable from the scripts — don't clutter the repo)
+Generated_EPW/
+*.epw
+*.ddy
+!platform/AI-BEE_Weather_Platform.html
+
+# Large raw data you should NOT redistribute (per the TMYx/ERA5 licensing notes in README)
+EPW_Libya/
+*.grib
+*.grib2
+*.nc
+era5_at_28_stations.json
+era5_at_9_validation_points.json
+
+# Large intermediate JSON (regenerable via extract_and_train.py; don't bloat the repo)
+stations_hourly.json
+prediction_grid.json
+hybrid_prediction_grid.json
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
