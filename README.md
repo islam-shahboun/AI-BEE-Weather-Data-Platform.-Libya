@@ -3,7 +3,7 @@
 **A hybrid machine-learning and reanalysis-corrected climate prediction platform for Libya**, built on 28 real TMYx weather stations (2011–2025) and ERA5 reanalysis. Predicts climate metrics (HDD, CDD, solar radiation, temperature, humidity, wind) for **any location in Libya** and generates ready-to-use EnergyPlus `.epw` weather files and ASHRAE-style `.ddy` design-day files — no measured station required at the target site.
 
 **Created by:** Eng. Islam K Shahboun & Prof. Dr. Samah K Alghoul
-
+[![DOI](https://zenodo.org/badge/1301392511.svg)](https://doi.org/10.5281/zenodo.21372888)
 ---
 
 ## Live Demo
