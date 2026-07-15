@@ -25,50 +25,41 @@ Open `platform/AI-BEE_Weather_Platform.html` directly in any browser — no inst
 
 ```
 ├── platform/
-│   └── AI-BEE_Weather_Platform.html          # Self-contained interactive platform (hybrid model, EPW+DDY generation)
+│   └── AI-BEE Weather Data Platform.html          # Self-contained interactive platform (hybrid model, EPW+DDY generation)
 ├── scripts/
-│   ├── extract_and_train.py                  # Extracts precise station data, trains baseline Random Forest/Linear models
-│   ├── compute_monthly_profiles.py           # Compresses hourly data into monthly-hourly profiles for the platform
-│   ├── extract_era5_at_stations.py           # Extracts ERA5 reanalysis values at the 28 training stations (hybrid model input)
-│   ├── extract_era5_at_validation_points.py  # Extracts ERA5 values at independent validation points
-│   └── ai_bee_climate_predictor_final.py     # Standalone interactive CLI tool: hybrid model + EPW/DDY generation (no platform/HTML needed)
+│   ├── compute monthly profiles.py           # Compresses hourly data into monthly-hourly profiles for the platform
+│   ├── extract era5 at stations.py           # Extracts ERA5 reanalysis values at the 28 training stations
+│   ├── extract era5 at validation points.py  # Extracts ERA5 values at independent validation points
+│   └── AI-BEE climate predictor.py           # Standalone interactive CLI tool: hybrid model + EPW/DDY generation 
 ├── docs/
 │   ├── AI-BEE_Validation_Report.docx         # Full external validation report (baseline vs. hybrid, statistical tests)
 │   └── Table1_Station_Summary.docx           # Complete 28-station coordinate/climate summary table
-├── figures/
-│   ├── fig1_scatter_comparison.png / .xlsx   # Predicted vs. observed, baseline vs. hybrid
-│   ├── fig2_bar_comparison.png / .xlsx       # NRMSE and bias comparison
-│   ├── fig3_era5_only_vars.png / .xlsx       # RH/WS/GHI/DNI comparison at ERA5-only validation points
-│   ├── fig4_zone_classification.png / .xlsx  # K-means climate zone classification
-│   ├── fig5_hdd_cdd_gradient_labeled.png / .xlsx  # HDD/CDD gradient with all 28 stations labeled
-│   └── fig6_ghi_all_stations.png / .xlsx     # Annual GHI ranked across all 28 stations
 ├── LICENSE
 ├── CITATION.cff
 └── README.md
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Option A — Just use the platform
-Download `platform/AI-BEE_Weather_Platform.html` and open it in Chrome/Edge/Firefox. That's it.
+Download `platform/AI-BEE Weather Data Platform.html` and open it in Chrome/Edge/Firefox. That's it.
 
 ### Option B — Run the standalone Python predictor (hybrid model + EPW/DDY generation)
 ```bash
 pip install pandas numpy scikit-learn
-python scripts/ai_bee_climate_predictor_final.py
+python scripts/AI-BEE climate predictor.py
 ```
 Follow the interactive prompts (location name, latitude, longitude, elevation, and optionally ERA5 values for the hybrid correction). It trains the models, reports cross-validated accuracy, and generates full `.epw` and `.ddy` files for your location. If ERA5 data is not supplied, it automatically falls back to the baseline model and tells you so.
 
 ### Option C — Regenerate all underlying data from scratch
 ```bash
-python scripts/extract_and_train.py                    # -> stations_precise.json, prediction_grid.json, model_metrics.json, stations_hourly.json
-python scripts/compute_monthly_profiles.py              # -> monthly_profiles.json
-python scripts/extract_era5_at_stations.py              # -> era5_at_28_stations.json (enables hybrid bias-correction)
-python scripts/extract_era5_at_validation_points.py     # -> era5_at_9_validation_points.json (for independent validation)
+python scripts/compute monthly profiles.py              # -> monthly_profiles.json
+python scripts/extract era5 at stations.py              # -> era5_at_28_stations.json (enables hybrid bias-correction)
+python scripts/extract era5 at validation points.py     # -> era5_at_9_validation_points.json (for independent validation)
 ```
 Edit the path variables at the top of each script to point to your local folders.
 
-## 🔬 Methodology (summary)
+## Methodology (summary)
 
 1. **Baseline spatial prediction:** Random Forest Regression (with Linear Regression as an automatically-selected alternative per target) trained on (latitude, longitude, elevation) → annual climate targets, validated with Leave-One-Out Cross-Validation.
 2. **Hybrid ERA5 bias-correction:** for each target, compares a naive feature-augmentation strategy against a residual (delta) correction strategy, both using ERA5 reanalysis as an auxiliary predictor; the better-performing strategy per target (via LOOCV) is kept.
@@ -79,7 +70,7 @@ Edit the path variables at the top of each script to point to your local folders
 
 Independent external validation (n=9) found a statistically significant systematic bias in the baseline model's HDD estimation (paired t-test, p = 0.0012). After hybrid ERA5 bias-correction, this bias was no longer statistically detectable (p = 0.1026), with NRMSE reduced by 23% and R² improved from 0.463 to 0.680. Full statistics for all validated variables are in `docs/AI-BEE_Validation_Report.docx`.
 
-## Known Limitations (please read before citing results)
+## Known Limitations 
 
 - Trained on only 28 stations — a small sample for any ML model, regardless of cross-validation rigor.
 - The ERA5-only validation subset (n=3) is too small for standalone statistical conclusions; treat as illustrative alongside the ground-station results.
@@ -87,7 +78,7 @@ Independent external validation (n=9) found a statistically significant systemat
 - Cooling degree-day and mean temperature bias were substantially reduced by the hybrid correction but not fully eliminated (remain statistically significant at p < 0.05).
 - The "donor station" selection for EPW/DDY synthesis is currently nearest-neighbor only (not yet a distance-weighted blend of multiple stations).
 - The DDY file's cooling-day "wetbulb" value is a simplified coincident relative-humidity proxy, not a full psychrometric wet-bulb calculation — verify before use in final HVAC equipment sizing.
-- Synthesized EPW/DDY files are an engineering-grade estimate for early-stage screening — not a substitute for measured data or a physically-based downscaling tool (e.g., Meteonorm) for final design-stage simulations.
+- Synthesized EPW/DDY files are an engineering-grade estimate for early-stage screening, not a substitute for measured data or a physically-based downscaling tool for final design-stage simulations.
 
 ## Data Sources & Citation
 
